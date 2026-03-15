@@ -448,25 +448,29 @@
             const password = document.getElementById('login-password').value;
 
             try {
-                // 1. Authenticate with Firebase first (Source of truth for passwords)
-                const fireResult = await auth.signInWithEmailAndPassword(email, password);
-                const fireUser = fireResult.user;
+                // 1. Try Firebase first (Source of truth for customers/Google accounts)
+                try {
+                    const fireResult = await auth.signInWithEmailAndPassword(email, password);
+                    // 2. Fetch profile from MongoDB
+                    const res = await window.api.login({ email, firebaseVerified: true });
+                    if (res.user) {
+                        return processLogin(res.user, 'login-msg');
+                    }
+                } catch (fireErr) {
+                    // Firebase failed (maybe user only exists in MongoDB, like the admin)
+                    console.warn("Firebase Auth failed, trying MongoDB fallback...");
+                }
 
-                // 2. Fetch the full profile from your MongoDB database
-                // We use a special login endpoint that just needs the email since Firebase already verified them
-                const res = await window.api.login({ email, firebaseVerified: true });
-
+                // 2. Fallback: Authenticate directly with MongoDB
+                const res = await window.api.login({ email, password });
                 if (res.user) {
                     processLogin(res.user, 'login-msg');
                 } else {
-                    showMessage('login-msg', res.message || 'Account verified but profile not found', 'error');
+                    showMessage('login-msg', res.message || 'Invalid email or password', 'error');
                 }
             } catch (err) {
                 console.error("Login Error:", err);
-                let errorMsg = 'Invalid email or password';
-                if (err.code === 'auth/user-not-found') errorMsg = 'No account found with this email.';
-                if (err.code === 'auth/wrong-password') errorMsg = 'Incorrect password.';
-                showMessage('login-msg', errorMsg, 'error');
+                showMessage('login-msg', 'Server error. Please try again.', 'error');
             }
         });
 
