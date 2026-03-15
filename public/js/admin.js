@@ -331,12 +331,15 @@ function renderMediaThumbnail(url) {
     return `<img src="${url}" alt="Product" style="width:60px; height:60px; object-fit:contain; background:#f8f9fa; border-radius:4px;">`;
 }
 
+let currentManageFilterType = null;
+
 async function loadManageProducts(filterType = null) {
+    if (filterType) currentManageFilterType = filterType;
     if (!window.api) return;
     let products = await window.api.getProducts();
     
-    if (filterType) {
-        products = products.filter(p => p.type === filterType);
+    if (currentManageFilterType) {
+        products = products.filter(p => p.type === currentManageFilterType);
     }
 
     const tbody = document.getElementById('manage-products-body');
@@ -372,6 +375,7 @@ async function deleteProduct(productId) {
     try {
         await window.api.deleteProduct(productId);
         loadManageProducts();
+
     } catch (err) {
         console.error('Error deleting product:', err);
     }

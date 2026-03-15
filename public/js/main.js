@@ -371,12 +371,8 @@ async function initHomeSlider(slider, dotsContainer) {
         const slidesData = await window.api.getSliders();
         
         if (!slidesData || slidesData.length === 0) {
-            // Default images if none in DB
-            const defaultSlides = [
-                { image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80' },
-                { image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80' }
-            ];
-            renderSlides(slider, dotsContainer, defaultSlides);
+            slider.innerHTML = '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f5f0; color:#999; font-size:1.1rem;"><p>No slider images added yet.</p></div>';
+            return;
         } else {
             renderSlides(slider, dotsContainer, slidesData);
         }

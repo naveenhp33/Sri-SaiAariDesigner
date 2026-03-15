@@ -4,9 +4,8 @@
 
 /* Hero section */
 .hero {
-    background: linear-gradient(rgba(253,250,246,0.82), rgba(253,250,246,0.82)),
-        url('https://images.unsplash.com/photo-1558769132-cb1fac0840f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')
-        center/cover no-repeat;
+    background: linear-gradient(rgba(253,250,246,0.92), rgba(253,250,246,0.85)),
+        linear-gradient(135deg, #f8e8d4, #f5d5c8);
     min-height: 80vh;
     display: flex;
     align-items: center;
