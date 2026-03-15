@@ -484,7 +484,7 @@
                 // Now that branding is verified, these will land in the Inbox better!
                 await auth.sendPasswordResetEmail(email);
 
-                showMessage('forgot-msg', 'Reset link sent! Please check your Inbox (and Spam folder).', 'success');
+                showMessage('forgot-msg', 'Reset link sent! Please check your Inbox. If not found, check the <b>Spam folder</b> and mark it as <b>"Not Spam"</b>.', 'success');
             } catch (err) {
                 console.error("Firebase Reset Error:", err);
                 let errorMsg = 'Failed to send reset link.';
