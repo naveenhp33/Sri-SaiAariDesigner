@@ -189,6 +189,15 @@ if (!window.api) {
             body: JSON.stringify({ token, password })
         });
         return await res.json();
+    },
+
+    rateOrderItem: async (orderId, productId, rating) => {
+        const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/rate-item`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId, rating })
+        });
+        return await res.json();
     }
     };
 

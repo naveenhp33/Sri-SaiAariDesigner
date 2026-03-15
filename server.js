@@ -478,6 +478,49 @@ app.delete('/api/orders/:id', async (req, res) => {
     }
 });
 
+// 9. Rate an order item
+app.post('/api/orders/:orderId/rate-item', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { productId, rating } = req.body;
+
+        const order = await Order.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (order.orderStatus !== 'Completed') {
+            return res.status(400).json({ message: 'Ratings can only be given for completed orders' });
+        }
+
+        // Find the item within the order
+        const item = order.items.find(i => i.productId.toString() === productId);
+        if (!item) return res.status(404).json({ message: 'Item not found in order' });
+
+        if (item.isRated) return res.status(400).json({ message: 'Item already rated' });
+
+        // Update Product Rating
+        const product = await Product.findById(productId);
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+
+        const currentRating = product.rating || 5;
+        const currentReviews = product.reviews || 0;
+
+        // Calculate new average
+        const newRating = ((currentRating * currentReviews) + parseFloat(rating)) / (currentReviews + 1);
+        
+        product.rating = newRating;
+        product.reviews = currentReviews + 1;
+        await product.save();
+
+        // Mark as rated in order
+        item.isRated = true;
+        await order.save();
+
+        res.json({ message: 'Rating submitted successfully', newRating: product.rating });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

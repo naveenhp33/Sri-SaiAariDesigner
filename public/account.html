@@ -150,6 +150,10 @@
         /* Guest Prompt */
         .guest-prompt { text-align: center; padding: 80px 20px; }
         .guest-prompt i { font-size: 4rem; color: #ccc; margin-bottom: 20px; }
+
+        /* Stars Rating */
+        .stars i { transition: color 0.2s; font-size: 0.9rem; }
+        .stars i.hover, .stars i.active { color: #f1c40f !important; }
     </style>
 </head>
 <body>
@@ -429,10 +433,35 @@
                                 <span class="order-id">ID: ${o._id.substring(0,8).toUpperCase()}...</span>
                                 <span>${new Date(o.createdAt).toLocaleDateString()}</span>
                             </div>
-                            <div class="order-body">
-                                <p style="margin-bottom: 5px;">Status: <span class="status-badge" style="background: #f0f0f0; padding: 2px 8px; border-radius: 4px; font-weight: 600;">${o.orderStatus}</span></p>
-                                <p class="order-total">Total: ₹${o.totalAmount}</p>
-                            </div>
+                             <div class="order-body">
+                                 <p style="margin-bottom: 5px;">Status: <span class="status-badge" style="background: #f0f0f0; padding: 2px 8px; border-radius: 4px; font-weight: 600;">${o.orderStatus}</span></p>
+                                 <div class="order-items-minimal" style="margin: 10px 0;">
+                                     ${(o.items || []).map(item => `
+                                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee;">
+                                             <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                                 <img src="${item.image}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                                                 <span style="font-size: 0.85rem;">${item.name} (x${item.qty})</span>
+                                             </div>
+                                             ${o.orderStatus === 'Completed' ? `
+                                                 <div style="margin-left: 10px; border-left: 1px solid #eee; padding-left: 15px;">
+                                                     ${item.isRated ? `
+                                                         <span style="font-size: 0.75rem; color: #2dc937;"><i class="fas fa-check-circle"></i> Rated</span>
+                                                     ` : `
+                                                         <div class="stars" id="stars-${o._id}-${item.productId}" style="color: #e0e0e0; cursor: pointer; display: flex; gap: 2px;">
+                                                             <i class="fas fa-star" onclick="submitRating('${o._id}', '${item.productId}', 1)" onmouseover="highlightStars(this, 1)" onmouseout="resetStars(this)"></i>
+                                                             <i class="fas fa-star" onclick="submitRating('${o._id}', '${item.productId}', 2)" onmouseover="highlightStars(this, 2)" onmouseout="resetStars(this)"></i>
+                                                             <i class="fas fa-star" onclick="submitRating('${o._id}', '${item.productId}', 3)" onmouseover="highlightStars(this, 3)" onmouseout="resetStars(this)"></i>
+                                                             <i class="fas fa-star" onclick="submitRating('${o._id}', '${item.productId}', 4)" onmouseover="highlightStars(this, 4)" onmouseout="resetStars(this)"></i>
+                                                             <i class="fas fa-star" onclick="submitRating('${o._id}', '${item.productId}', 5)" onmouseover="highlightStars(this, 5)" onmouseout="resetStars(this)"></i>
+                                                         </div>
+                                                     `}
+                                                 </div>
+                                             ` : ''}
+                                         </div>
+                                     `).join('')}
+                                 </div>
+                                 <p class="order-total">Total: ₹${o.totalAmount}</p>
+                             </div>
                         </div>
                     `).join('');
                 }
@@ -454,6 +483,33 @@
                         <a href="product.html?id=${item._id}" class="btn" style="padding: 5px 10px; font-size: 0.8rem; display: block;">View</a>
                     </div>
                 `).join('');
+            }
+        }
+        
+        // Rating functions
+        function highlightStars(el, count) {
+            const stars = el.parentElement.querySelectorAll('i');
+            stars.forEach((s, idx) => {
+                if (idx < count) s.classList.add('hover');
+                else s.classList.remove('hover');
+            });
+        }
+
+        function resetStars(el) {
+            const stars = el.parentElement.querySelectorAll('i');
+            stars.forEach(s => s.classList.remove('hover'));
+        }
+
+        async function submitRating(orderId, productId, rating) {
+            if (!confirm(`Do you want to rate this product ${rating} stars?`)) return;
+            
+            try {
+                const res = await window.api.rateOrderItem(orderId, productId, rating);
+                alert(res.message || 'Thank you for your rating!');
+                loadAccount(); // Reload to refresh the stars UI
+            } catch (err) {
+                console.error('Rating Error:', err);
+                alert('Failed to submit rating. Please try again.');
             }
         }
 

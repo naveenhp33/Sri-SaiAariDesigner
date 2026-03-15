@@ -639,37 +639,39 @@ function renderProductCards(products, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
     container.innerHTML = products.map(product => {
         const isBeautyParlor = product.type === 'beauty-parlour';
+        const isWishlisted = wishlist.some(item => item._id === product._id);
         
         if (isBeautyParlor) {
             return `
                 <div class="product-card service-card">
-                    <a href="product.html?id=${product._id}">
-                        <img src="${product.image}" alt="${product.name}" class="product-img">
-                    </a>
+                    <div class="product-card-image-wrapper">
+                        <a href="product.html?id=${product._id}">
+                            <img src="${product.image}" alt="${product.name}" class="product-img">
+                        </a>
+                        <div class="card-badge-rating">
+                            ${parseFloat(product.rating || 5).toFixed(1)} <i class="fas fa-star" style="color: #2dc937;"></i>
+                        </div>
+                        <button class="wishlist-btn-card ${isWishlisted ? 'active' : ''}" onclick='event.stopPropagation(); toggleWishlist(${JSON.stringify(product).replace(/'/g, "&#39;")})'>
+                            <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
                     <div class="product-info">
+                        <span class="product-category-label">${product.category}</span>
                         <a href="product.html?id=${product._id}">
                             <h3 class="product-title">${product.name}</h3>
                         </a>
-                        <div class="service-meta" style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #666;">
+                        <div class="service-meta" style="display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.75rem; color: #777;">
                             <span><i class="far fa-clock"></i> ${product.duration || 'N/A'}</span>
-                            <span><i class="fas fa-tag"></i> ${product.category}</span>
                         </div>
-                        <p class="service-desc" style="font-size: 0.85rem; color: #777; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            ${product.description}
-                        </p>
-                        <div class="product-rating" style="margin-bottom: 10px;">
-                            ${generateStars(Math.round(product.rating || 5))} 
-                            <span style="font-weight: bold; margin-left: 5px; color: #333;">${parseFloat(product.rating || 5).toFixed(1)}</span>
+                        <div class="price-container">
+                            <span class="product-price">₹${product.price}</span>
                         </div>
-                        <p class="product-price">₹ ${product.price}</p>
-                        <div style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: auto; padding-top: 15px;">
-                            <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'd like to book a service:
-*Service:* ${product.name}
-*Price:* ₹${product.price}
-*Duration:* ${product.duration}
-*Link:* ` + window.location.origin + window.location.pathname.replace(/\/[^/]+$/, '') + '/product.html?id=' + product._id)}" target="_blank" class="btn" style="flex: 1; background-color: #25d366; color: white; padding: 10px; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <div class="card-actions">
+                            <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'd like to book a service: *Service:* ${product.name}`)}" target="_blank" class="btn" style="flex: 1; background-color: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 5px;">
                                 <i class="fab fa-whatsapp"></i> Book Now
                             </a>
                         </div>
@@ -680,26 +682,29 @@ function renderProductCards(products, containerId) {
 
         return `
             <div class="product-card">
-                <a href="product.html?id=${product._id}">
-                    <img src="${product.image}" alt="${product.name}" class="product-img">
-                </a>
+                <div class="product-card-image-wrapper">
+                    <a href="product.html?id=${product._id}">
+                        <img src="${product.image}" alt="${product.name}" class="product-img">
+                    </a>
+                    <div class="card-badge-rating">
+                        ${parseFloat(product.rating || 5).toFixed(1)} <i class="fas fa-star"></i>
+                    </div>
+                    <button class="wishlist-btn-card ${isWishlisted ? 'active' : ''}" onclick='event.stopPropagation(); toggleWishlist(${JSON.stringify(product).replace(/'/g, "&#39;")})'>
+                        <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                </div>
                 <div class="product-info">
+                    <span class="product-category-label">${product.category}</span>
                     <a href="product.html?id=${product._id}">
                         <h3 class="product-title">${product.name}</h3>
                     </a>
-                    <div class="product-rating">
-                        ${generateStars(Math.round(product.rating || 5))} 
-                        <span style="font-weight: bold; margin-left: 5px; color: #333;">${parseFloat(product.rating || 5).toFixed(1)}</span>
-                        <span style="color: #888; font-size: 0.8rem;">(${product.reviews || 0})</span>
+                    <div class="price-container">
+                        <span class="product-price">₹${product.price}</span>
                     </div>
-                    <p class="product-price">₹ ${product.price}</p>
-                    <div style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: auto; padding-top: 15px;">
-                        <button class="btn btn-outline" style="flex: 1; padding: 10px 5px; font-size: 0.9rem;" onclick='addToCart(${JSON.stringify(product).replace(/'/g, "&#39;")}, 1, "")'>Cart</button>
-                        <button class="btn" style="flex: 1; padding: 10px 5px; font-size: 0.9rem; background-color: #ff9f00;" onclick='buyNow(${JSON.stringify(product).replace(/'/g, "&#39;")})'>Buy</button>
-                        <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'm interested in:
-*Product:* ${product.name}
-*Price:* ₹${product.price}
-*Link:* ` + window.location.origin + window.location.pathname.replace(/\/[^/]+$/, '') + '/product.html?id=' + product._id)}" target="_blank" class="btn" style="background-color: #25d366; color: white; padding: 10px; border: none; display: flex; align-items: center; justify-content: center; width: 45px;" title="Send to WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <div class="card-actions">
+                        <button class="btn btn-outline" style="flex: 1;" onclick='event.stopPropagation(); addToCart(${JSON.stringify(product).replace(/'/g, "&#39;")}, 1, "")'>Cart</button>
+                        <button class="btn" style="flex: 1; background-color: #ff9f00;" onclick='event.stopPropagation(); buyNow(${JSON.stringify(product).replace(/'/g, "&#39;")})'>Buy</button>
+                        <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'm interested in: *Product:* ${product.name}`)}" target="_blank" class="btn whatsapp-btn" style="background-color: #25d366; color: white; width: 40px; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>

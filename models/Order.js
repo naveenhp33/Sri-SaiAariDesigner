@@ -10,7 +10,8 @@ const orderSchema = new mongoose.Schema({
         name: { type: String },
         price: { type: Number },
         qty: { type: Number },
-        image: { type: String }
+        image: { type: String },
+        isRated: { type: Boolean, default: false }
     }],
     totalAmount: { type: Number, required: true },
     paymentStatus: { type: String, default: 'Pending' },
