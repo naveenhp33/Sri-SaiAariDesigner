@@ -206,7 +206,8 @@ app.post('/api/auth/forgot-password', async (req, res) => {
             }
         });
 
-        const resetUrl = `${req.protocol}://${req.get('host')}/reset-password.html?token=${token}`;
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const resetUrl = `${protocol}://${req.get('host')}/reset-password.html?token=${token}`;
 
         const mailOptions = {
             to: user.email,
