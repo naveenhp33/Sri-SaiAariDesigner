@@ -97,10 +97,11 @@ if (!window.api) {
         return await res.json();
     },
 
-    addSlider: async (formData) => {
+    addSlider: async (formData, signal) => {
         const res = await fetch(`${API_BASE_URL}/api/sliders`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: signal
         });
         return await res.json();
     },

@@ -386,9 +386,14 @@ async function initHomeSlider(slider, dotsContainer) {
 }
 
 function renderSlides(slider, dotsContainer, slides) {
-    slider.innerHTML = slides.map(slide => `
-        <img src="${slide.image || slide.url}" alt="Promotion" style="width:100%; object-fit:cover; flex-shrink:0;">
-    `).join('');
+    slider.innerHTML = slides.map(slide => {
+        const url = slide.image || slide.url;
+        const isVideo = url && (url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/'));
+        if (isVideo) {
+            return `<video src="${url}" style="width:100%; height:100%; object-fit:cover; flex-shrink:0;" autoplay loop muted playsinline></video>`;
+        }
+        return `<img src="${url}" alt="Promotion" style="width:100%; height:100%; object-fit:cover; flex-shrink:0;">`;
+    }).join('');
 
     const slideCount = slides.length;
     let currentSlide = 0;
