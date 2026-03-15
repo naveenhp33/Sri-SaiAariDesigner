@@ -26,6 +26,25 @@ app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static('public'));
 
+// Keep-alive logic for Render free tier
+// This prevents the server from sleeping after 15 minutes of inactivity
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+if (RENDER_URL) {
+    const https = require('https');
+    setInterval(() => {
+        https.get(`${RENDER_URL}/api/ping`, (res) => {
+            console.log(`Keep-alive ping status: ${res.statusCode}`);
+        }).on('error', (err) => {
+            console.error('Keep-alive ping error:', err.message);
+        });
+    }, 10 * 60 * 1000); // Ping every 10 minutes
+}
+
+// Health check endpoint
+app.get('/api/ping', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date() });
+});
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB Atlas'))
