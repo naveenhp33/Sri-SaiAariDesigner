@@ -640,9 +640,9 @@ function renderProductCards(products, containerId) {
     if (!container) return;
 
     container.innerHTML = products.map(product => {
-        const isBeautyParlor = product.type === 'beauty-parlour';
+        const isBeautyParlour = product.type === 'beauty-parlour';
         
-        if (isBeautyParlor) {
+        if (isBeautyParlour) {
             return `
                 <div class="product-card service-card">
                     <a href="product.html?id=${product._id}">
@@ -801,7 +801,7 @@ async function loadProductDetail() {
             const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
             const isWishlisted = wishlist.some(x => x && x._id === product._id);
 
-            const isBeautyParlor = product.type === 'beauty-parlour';
+            const isBeautyParlour = product.type === 'beauty-parlour';
             
             const images = (product.images && product.images.length > 0) ? product.images : [product.image].filter(Boolean);
             
@@ -820,23 +820,23 @@ async function loadProductDetail() {
                              style="object-fit:cover; width:100%; border-radius:10px; transition:opacity 0.25s ease;">
                         <div class="image-overlay-btns">
                             <div class="overlay-btn wishlist-toggle ${isWishlisted ? 'wishlisted' : ''}" onclick='toggleWishlist(${JSON.stringify(product).replace(/'/g, "&#39;")})' title="Add to Wishlist"><i class="fas fa-heart"></i></div>
-                            <div class="overlay-btn share-btn" onclick='shareProduct("${product.name}", "Check out this ${isBeautyParlor ? 'service' : 'design'}: ${product.name}")' title="Share"><i class="fas fa-share-nodes"></i></div>
+                            <div class="overlay-btn share-btn" onclick='shareProduct("${product.name}", "Check out this ${isBeautyParlour ? 'service' : 'design'}: ${product.name}")' title="Share"><i class="fas fa-share-nodes"></i></div>
                         </div>
                     </div>
                 </div>
                 <div class="product-detail-info">
                     <h1>${product.name}</h1>
-                    ${isBeautyParlor ? `<p class="service-category-tag" style="background: var(--secondary-color); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--primary-color); font-weight: bold; margin-bottom: 15px;">${product.category}</p>` : ''}
+                    ${isBeautyParlour ? `<p class="service-category-tag" style="background: var(--secondary-color); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--primary-color); font-weight: bold; margin-bottom: 15px;">${product.category}</p>` : ''}
                     <div class="product-rating" style="font-size: 1.5rem; margin-bottom: 5px;">
                         <span id="main-rating-${product._id}">
                             ${generateInteractiveStars(product.rating || 5, product._id)}
                             <span style="font-size: 1.2rem; font-weight: bold; margin-left: 5px; color: #333;">${parseFloat(product.rating || 5).toFixed(1)}</span>
                         </span>
                         <span style="color: #888; font-size: 1rem; margin-left: 10px;">(<span id="review-count-${product._id}">${product.reviews || 0}</span> reviews)</span>
-                        <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Click stars to rate this ${isBeautyParlor ? 'service' : 'product'}</p>
+                        <p style="font-size: 0.8rem; color: #999; margin-top: 5px;">Click stars to rate this ${isBeautyParlour ? 'service' : 'product'}</p>
                     </div>
                     <p class="product-detail-price" style="font-size: 2.2rem; margin-top: 15px;">₹ ${product.price}</p>
-                    ${isBeautyParlor ? `
+                    ${isBeautyParlour ? `
                         <div class="service-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
                             <div>
                                 <small style="color: #888; display: block; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">Duration</small>

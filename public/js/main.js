@@ -394,11 +394,16 @@ function renderSlides(slider, dotsContainer, slides) {
     let currentSlide = 0;
     dotsContainer.innerHTML = '';
 
+    if (slideCount <= 1) return;
+
     for (let i = 0; i < slideCount; i++) {
         const dot = document.createElement('div');
         dot.classList.add('dot');
         if (i === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToSlide(i));
+        dot.addEventListener('click', () => {
+            goToSlide(i);
+            startAutoSlide();
+        });
         dotsContainer.appendChild(dot);
     }
 
@@ -406,7 +411,7 @@ function renderSlides(slider, dotsContainer, slides) {
 
     function goToSlide(n) {
         currentSlide = (n + slideCount) % slideCount;
-        slider.style.transition = 'transform 0.6s ease-in-out';
+        slider.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         slider.style.transform = `translateX(-${currentSlide * 100}%)`;
         dots.forEach(d => d.classList.remove('active'));
         if (dots[currentSlide]) dots[currentSlide].classList.add('active');
@@ -414,20 +419,18 @@ function renderSlides(slider, dotsContainer, slides) {
 
     function startAutoSlide() {
         clearInterval(slideInterval);
-        slideInterval = setInterval(() => goToSlide(currentSlide + 1), 3000);
+        slideInterval = setInterval(() => {
+            goToSlide(currentSlide + 1);
+        }, 3000);
     }
 
-    let slideInterval = setInterval(() => goToSlide(currentSlide + 1), 3000);
+    let slideInterval = setInterval(() => {
+        goToSlide(currentSlide + 1);
+    }, 3000);
     
-    slider.addEventListener('mouseenter', () => clearInterval(slideInterval));
-    slider.addEventListener('mouseleave', startAutoSlide);
-
-    dots.forEach((dot, i) => {
-        dot.onclick = () => {
-            goToSlide(i);
-            startAutoSlide();
-        };
-    });
+    // No pause on hover to make it "completely" automatic as requested
+    // slider.addEventListener('mouseenter', () => clearInterval(slideInterval));
+    // slider.addEventListener('mouseleave', startAutoSlide);
 }
 
 async function initCourses() {
