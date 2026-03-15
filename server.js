@@ -264,12 +264,12 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 
         const mailOptions = {
             to: user.email,
-            from: `"Sri & Sai Aari Fashion" <${process.env.EMAIL_USER}>`,
+            from: `"Sri & Sai Fashion" <${process.env.EMAIL_USER}>`,
             subject: 'Password Reset Request',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 12px; background-color: #ffffff; overflow: hidden;">
                     <div style="background-color: #d4a373; padding: 30px; text-align: center;">
-                        <h1 style="color: white; margin: 0;">Sri & Sai Aari Fashion</h1>
+                        <h1 style="color: white; margin: 0;">Sri & Sai Fashion</h1>
                     </div>
                     <div style="padding: 30px; background-color: #fdfaf7;">
                         <h2 style="color: #333; margin-top: 0;">Reset Your Password</h2>
@@ -281,7 +281,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
                         <p style="color: #888; font-size: 0.9rem;">This link expires in 1 hour. If you didn't request this, no action is needed.</p>
                     </div>
                     <div style="text-align: center; padding: 20px; color: #aaa; font-size: 0.8rem; border-top: 1px solid #f0f0f0;">
-                        <p>© 2024 Sri & Sai Aari Fashion & Academy<br>Tamil Nadu, India</p>
+                        <p>© 2024 Sri & Sai Fashion & Academy<br>Tamil Nadu, India</p>
                     </div>
                 </div>
             `
