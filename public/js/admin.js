@@ -130,6 +130,9 @@ async function loadDashboardData() {
     const pendingOrders = orders.filter(o => o.orderStatus === 'Pending');
     document.getElementById('pending-orders').innerText = pendingOrders.length;
 
+    const completedOrders = orders.filter(o => o.orderStatus === 'Completed');
+    document.getElementById('completed-orders').innerText = completedOrders.length;
+
     // Recent Orders (last 5)
     const recentOrdersBody = document.getElementById('recent-orders-body');
     if (orders.length === 0) {
@@ -153,14 +156,22 @@ async function loadDashboardData() {
     `).join('');
 }
 
+window.filterOrdersByStatus = function(status) {
+    loadAllOrders(status);
+};
+
 // ---- Orders Page ----
-async function loadAllOrders() {
+async function loadAllOrders(statusFilter = 'All') {
     if (!window.api) return;
-    const orders = await window.api.getOrders();
+    let orders = await window.api.getOrders();
     const ordersBody = document.getElementById('orders-body');
 
+    if (statusFilter !== 'All') {
+        orders = orders.filter(o => (o.orderStatus || 'Pending') === statusFilter);
+    }
+
     if (orders.length === 0) {
-        ordersBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#888; padding:30px;">No orders found.</td></tr>';
+        ordersBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:30px;">No ${statusFilter === 'All' ? '' : statusFilter.toLowerCase()} orders found.</td></tr>`;
         return;
     }
 
@@ -228,10 +239,18 @@ document.addEventListener('change', (e) => {
             
             previewDiv.innerHTML = '';
             for (let file of files) {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.style = "max-width: 100%; height: 100px; object-fit: contain; background: #f8f9fa; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);";
-                previewDiv.appendChild(img);
+                let media;
+                if (file.type.startsWith('video/')) {
+                    media = document.createElement('video');
+                    media.src = URL.createObjectURL(file);
+                    media.controls = true;
+                    media.style = "max-width: 100%; height: 120px; border-radius: 4px; background: #000;";
+                } else {
+                    media = document.createElement('img');
+                    media.src = URL.createObjectURL(file);
+                    media.style = "max-width: 100%; height: 100px; object-fit: contain; background: #f8f9fa; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);";
+                }
+                previewDiv.appendChild(media);
             }
             previewDiv.style.display = 'flex';
         }
@@ -239,13 +258,29 @@ document.addEventListener('change', (e) => {
 });
 
 // ---- Add Product ----
+let currentUploadController = null;
+
+window.cancelUpload = function() {
+    if (currentUploadController) {
+        currentUploadController.abort();
+        const statusEl = document.getElementById('product-status');
+        if (statusEl) {
+            statusEl.innerText = '❌ Upload cancelled.';
+            statusEl.style.color = 'orange';
+        }
+        currentUploadController = null;
+    }
+};
+
 const addProductForm = document.getElementById('add-product-form');
 if (addProductForm) {
     addProductForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const statusEl = document.getElementById('product-status');
-        statusEl.innerText = '⏳ Adding product...';
+        statusEl.innerHTML = `⏳ Adding product... <button type="button" onclick="cancelUpload()" style="margin-left:10px; padding:2px 8px; font-size:0.8rem; background:#f44336; color:white; border:none; border-radius:4px; cursor:pointer;">Stop Upload</button>`;
         statusEl.style.color = 'blue';
+
+        currentUploadController = new AbortController();
 
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value);
@@ -265,20 +300,37 @@ if (addProductForm) {
         }
 
         try {
-            await window.api.addProduct(formData);
+            await window.api.addProduct(formData, currentUploadController.signal);
             statusEl.innerText = '✅ Product added successfully!';
             statusEl.style.color = 'green';
             addProductForm.reset();
             document.getElementById('image-preview').style.display = 'none';
-            setTimeout(() => { statusEl.innerText = ''; }, 3000);
+            setTimeout(() => { if (statusEl.innerText.includes('successfully')) statusEl.innerText = ''; }, 3000);
         } catch (err) {
-            statusEl.innerText = '❌ Error: ' + err.message;
-            statusEl.style.color = 'red';
+            if (err.name === 'AbortError') {
+                console.log('Upload aborted by user');
+            } else {
+                statusEl.innerText = '❌ Error: ' + err.message;
+                statusEl.style.color = 'red';
+            }
+        } finally {
+            currentUploadController = null;
         }
     });
 }
 
 // ---- Manage Products ----
+function renderMediaThumbnail(url) {
+    if (!url) return '';
+    const isVideo = url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/');
+    if (isVideo) {
+        return `<div style="width:60px; height:60px; background:#000; display:flex; align-items:center; justify-content:center; border-radius:4px; color:white; font-size:1.5rem;">
+                    <i class="fas fa-video"></i>
+                </div>`;
+    }
+    return `<img src="${url}" alt="Product" style="width:60px; height:60px; object-fit:contain; background:#f8f9fa; border-radius:4px;">`;
+}
+
 async function loadManageProducts(filterType = null) {
     if (!window.api) return;
     let products = await window.api.getProducts();
@@ -296,7 +348,7 @@ async function loadManageProducts(filterType = null) {
 
     tbody.innerHTML = products.map(product => `
         <tr>
-            <td><img src="${product.image}" alt="${product.name}" style="width:60px; height:60px; object-fit:contain; background:#f8f9fa; border-radius:4px;"></td>
+            <td>${renderMediaThumbnail(product.image)}</td>
             <td><strong>${product.name}</strong></td>
             <td>
                 <span style="background:#eee; padding:3px 10px; border-radius:20px; font-size:0.8rem; display:block; margin-bottom:5px;">Section: ${product.type || 'N/A'}</span>

@@ -21,18 +21,20 @@ if (!window.api) {
         return await res.json();
     },
 
-    addProduct: async (formData) => {
+    addProduct: async (formData, signal) => {
         const res = await fetch(`${API_BASE_URL}/api/products`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: signal
         });
         return await res.json();
     },
 
-    updateProduct: async (id, formData) => {
+    updateProduct: async (id, formData, signal) => {
         const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
             method: 'PUT',
-            body: formData
+            body: formData,
+            signal: signal
         });
         return await res.json();
     },

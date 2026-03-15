@@ -654,6 +654,18 @@ window.toggleWishlist = function (product) {
     if (typeof syncWithServer === 'function') syncWithServer();
 };
 
+function isMediaVideo(url) {
+    if (!url) return false;
+    return url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/');
+}
+
+function renderMediaTag(url, className, style = "") {
+    if (isMediaVideo(url)) {
+        return `<video src="${url}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
+    }
+    return `<img src="${url}" class="${className}" style="${style}" alt="Product">`;
+}
+
 function renderProductCards(products, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -665,7 +677,7 @@ function renderProductCards(products, containerId) {
             return `
                 <div class="product-card service-card">
                     <a href="product.html?id=${product._id}">
-                        <img src="${product.image}" alt="${product.name}" class="product-img">
+                        ${renderMediaTag(product.image, "product-img")}
                     </a>
                     <div class="product-info">
                         <a href="product.html?id=${product._id}">
@@ -700,7 +712,7 @@ function renderProductCards(products, containerId) {
         return `
             <div class="product-card">
                 <a href="product.html?id=${product._id}">
-                    <img src="${product.image}" alt="${product.name}" class="product-img">
+                    ${renderMediaTag(product.image, "product-img")}
                 </a>
                 <div class="product-info">
                     <a href="product.html?id=${product._id}">
@@ -824,19 +836,31 @@ async function loadProductDetail() {
             
             const images = (product.images && product.images.length > 0) ? product.images : [product.image].filter(Boolean);
             
+            // Main Media (Image or Video)
+            const mainMedia = images[0] || product.image;
+            const mediaTag = isMediaVideo(mainMedia) 
+                ? `<video src="${mainMedia}" class="product-detail-img" id="main-product-img" controls autoplay loop muted playsinline style="object-fit:cover; width:100%; border-radius:10px;"></video>`
+                : `<img src="${mainMedia}" alt="${product.name}" class="product-detail-img" id="main-product-img" style="object-fit:cover; width:100%; border-radius:10px; transition:opacity 0.25s ease;">`;
+
             container.innerHTML = `
                 <div class="product-detail-img-wrapper" style="position:relative; display:flex;">
                     ${images.length > 1 ? `
                         <div id="thumb-strip" style="display:flex; flex-direction:column; gap:8px; margin-right:15px; overflow-y:auto; max-height:480px;">
-                            ${images.map((img, idx) => `<img src="${img}" alt="View ${idx+1}"
-                                     onclick="switchProductImage('${img}', this)"
-                                     style="width:72px; height:72px; object-fit:cover; border-radius:6px; border:2px solid ${idx===0 ? 'var(--primary-color)' : '#ddd'}; cursor:pointer; flex-shrink:0; transition:border-color 0.2s;"
-                                     class="thumb-img ${idx===0 ? 'active-thumb' : ''}">`)}
+                            ${images.map((img, idx) => {
+                                const isVid = isMediaVideo(img);
+                                return `<div class="thumb-media-wrap" style="position:relative; cursor:pointer;" onclick="changeMainMedia('${img}', this)">
+                                            ${isVid 
+                                                ? `<div style="width:70px; height:70px; background:#000; display:flex; align-items:center; justify-content:center; border-radius:6px; color:white; border:2px solid transparent;" class="thumb-img ${idx===0 ? 'active-thumb' : ''}">
+                                                     <i class="fas fa-video"></i>
+                                                   </div>`
+                                                : `<img src="${img}" alt="Thumbnail" class="thumb-img ${idx===0 ? 'active-thumb' : ''}" style="width:70px; height:70px; object-fit:cover; border-radius:6px;">`
+                                            }
+                                        </div>`;
+                            }).join('')}
                         </div>
                     ` : ''}
                     <div style="flex:1; position:relative;">
-                        <img src="${images[0] || product.image}" alt="${product.name}" class="product-detail-img" id="main-product-img"
-                             style="object-fit:cover; width:100%; border-radius:10px; transition:opacity 0.25s ease;">
+                        ${mediaTag}
                         <div class="image-overlay-btns">
                             <div class="overlay-btn wishlist-toggle ${isWishlisted ? 'wishlisted' : ''}" onclick='toggleWishlist(${JSON.stringify(product).replace(/'/g, "&#39;")})' title="Add to Wishlist"><i class="fas fa-heart"></i></div>
                             <div class="overlay-btn share-btn" onclick='shareProduct("${product.name}", "Check out this ${isBeautyParlour ? 'service' : 'design'}: ${product.name}", "${images[0] || product.image}")' title="Share"><i class="fas fa-share-nodes"></i></div>
@@ -992,24 +1016,45 @@ async function initBeautyParlorPage() {
 }
 
 // Flipkart-style gallery switch
-window.switchProductImage = function(url, thumb) {
-    const mainImg = document.getElementById('main-product-img');
-    if (!mainImg) return;
+window.changeMainMedia = function (url, thumbWrap) {
+    const mainMediaElement = document.getElementById('main-product-img');
+    const container = mainMediaElement.parentElement;
     
-    // Fade out
-    mainImg.style.opacity = '0';
-    
-    setTimeout(() => {
-        mainImg.src = url;
-        // Fade in
-        mainImg.style.opacity = '1';
-        
-        // Update active thumbnail
-        document.querySelectorAll('.thumb-img').forEach(t => {
-            t.classList.remove('active-thumb');
-            t.style.borderColor = '#ddd';
-        });
+    // Remove previous active class
+    document.querySelectorAll('.thumb-img').forEach(t => {
+        t.classList.remove('active-thumb');
+        t.style.borderColor = '#ddd'; // Reset border for images
+        if (t.parentElement.classList.contains('thumb-media-wrap')) { // For video divs
+            t.style.borderColor = 'transparent';
+        }
+    });
+    const thumb = thumbWrap.querySelector('.thumb-img');
+    if (thumb) {
         thumb.classList.add('active-thumb');
         thumb.style.borderColor = 'var(--primary-color)';
-    }, 250);
+    }
+
+    const isVid = isMediaVideo(url);
+    let newTag;
+    
+    if (isVid) {
+        newTag = document.createElement('video');
+        newTag.src = url;
+        newTag.controls = true;
+        newTag.autoplay = true;
+        newTag.loop = true;
+        newTag.muted = true;
+        newTag.playsInline = true;
+        newTag.className = 'product-detail-img';
+        newTag.id = 'main-product-img';
+        newTag.style = "object-fit:cover; width:100%; border-radius:10px;";
+    } else {
+        newTag = document.createElement('img');
+        newTag.src = url;
+        newTag.className = 'product-detail-img';
+        newTag.id = 'main-product-img';
+        newTag.style = "object-fit:cover; width:100%; border-radius:10px; transition:opacity 0.25s ease;";
+    }
+
+    container.replaceChild(newTag, mainMediaElement);
 };
