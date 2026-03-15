@@ -857,6 +857,7 @@ async function loadProductDetail() {
 *Service:* ${product.name}
 *Price:* ₹${product.price}
 *Duration:* ${product.duration}
+*Image:* ${product.image}
 *Link:* ` + window.location.href)}" target="_blank" class="btn" style="flex: 1; min-width: 200px; background-color: #25d366; color: white; padding: 15px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; text-decoration: none;">
                                 <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i> Book via WhatsApp
                             </a>
@@ -870,6 +871,7 @@ async function loadProductDetail() {
                             <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'm interested in:
 *Product:* ${product.name}
 *Price:* ₹${product.price}
+*Image:* ${product.image}
 *Link:* ` + window.location.href)}" target="_blank" class="btn" style="background-color: #25d366; color: white; padding: 15px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: none; width: auto; flex: 0 0 70px;" title="Send link to WhatsApp">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
