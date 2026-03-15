@@ -337,23 +337,37 @@
 
         document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
             const userData = {
                 name: document.getElementById('signup-name').value,
-                email: document.getElementById('signup-email').value,
+                email: email,
                 phone: document.getElementById('signup-phone').value,
-                password: document.getElementById('signup-password').value
+                password: password
             };
 
             try {
+                // 1. Register in Firebase first (for Email/Password Reset support)
+                await auth.createUserWithEmailAndPassword(email, password);
+
+                // 2. Register in your MongoDB Database
                 const res = await window.api.signup(userData);
+                
                 if (res.message.includes('successfully')) {
-                    showMessage('signup-msg', 'Account created! Redirecting to login...', 'success');
+                    showMessage('signup-msg', 'Account created successfully! Redirecting to login...', 'success');
                     setTimeout(() => toggleSection('login'), 2000);
                 } else {
                     showMessage('signup-msg', res.message || 'Signup failed', 'error');
                 }
             } catch (err) {
-                showMessage('signup-msg', 'Server error. Please try again.', 'error');
+                console.error("Signup Error:", err);
+                let errorMsg = 'Server error. Please try again.';
+                if (err.code === 'auth/email-already-in-use') {
+                    errorMsg = 'This email is already registered.';
+                } else if (err.code === 'auth/weak-password') {
+                    errorMsg = 'Password should be at least 6 characters.';
+                }
+                showMessage('signup-msg', errorMsg, 'error');
             }
         });
 
