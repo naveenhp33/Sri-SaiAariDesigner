@@ -93,11 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Build the WhatsApp message
-            // Start with image link to trigger a prominent preview
             let message = "";
-            if (checkoutItems.length > 0 && checkoutItems[0].image) {
-                message += `${checkoutItems[0].image}\n\n`;
-            }
 
             message += `*New Order Details*\n`;
             message += `*Customer Name:* ${finalName}\n`;

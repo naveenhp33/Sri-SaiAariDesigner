@@ -459,7 +459,7 @@ window.handleServiceBooking = function(productName, price, duration, mediaUrl, p
         window.location.href = 'login.html?msg=login_required&redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
         return;
     }
-    const message = `${mediaUrl || ''}\n\nHello, I'd like to book a service:\n*Service:* ${productName}\n*Price:* ₹${price}\n*Duration:* ${duration}\n*Link:* ${productUrl}`;
+    const message = `Hello, I'd like to book a service:\n*Service:* ${productName}\n*Price:* ₹${price}\n*Duration:* ${duration}\n*Link:* ${productUrl}`;
     const whatsappUrl = `https://wa.me/919688561269?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 };

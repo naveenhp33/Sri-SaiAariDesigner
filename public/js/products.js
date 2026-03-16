@@ -426,28 +426,20 @@ function generateInteractiveStars(rating, productId) {
 window.shareProduct = async function (name, text, imageUrl) {
     const url = window.location.href;
     
-    // Feature detection for Web Share API with files
-    const canShareFiles = navigator.canShare && navigator.canShare({ files: [new File([], "test.jpg", { type: "image/jpeg" })] });
-
-    if (canShareFiles && imageUrl) {
+    if (navigator.share) {
         try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const file = new File([blob], "product.jpg", { type: blob.type });
-            
             await navigator.share({
                 title: name,
                 text: text,
-                url: url,
-                files: [file]
+                url: url
             });
             return; // Successfully shared
         } catch (err) {
-            console.warn("Sharing file failed, falling back to text", err);
+            console.warn("Sharing failed, falling back to modal", err);
         }
     }
 
-    // Fallback Modal for Desktop or browsers without file sharing
+    // Fallback Modal for Desktop or browsers without Web Share API
     const bodyHtml = `
         <div class="share-options">
             <div class="share-opt-btn whatsapp" onclick='window.open("https://wa.me/?text=" + encodeURIComponent("${text} " + "${url}"), "_blank"); closeModal();'>
@@ -738,9 +730,7 @@ async function loadProductDetail() {
                             <button class="btn" style="flex: 1; padding: 15px; font-size: 1.1rem; background-color: #ff9f00;" onclick='buyNow(${JSON.stringify(product).replace(/'/g, "&#39;")})' ${product.stock === 0 ? 'disabled' : ''}>
                                 Buy Now
                             </button>
-                            <a href="https://wa.me/919688561269?text=${encodeURIComponent(`${product.image}
-
-Hello, I'm interested in:
+                            <a href="https://wa.me/919688561269?text=${encodeURIComponent(`Hello, I'm interested in:
 *Product:* ${product.name}
 *Price:* ₹${product.price}
 *Link:* ${window.location.href}`)}" target="_blank" class="btn" style="background-color: #25d366; color: white; padding: 15px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: none; width: auto; flex: 0 0 70px;" title="Send link to WhatsApp">

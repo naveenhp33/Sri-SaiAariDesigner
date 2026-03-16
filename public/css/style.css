@@ -437,7 +437,7 @@ header {
 .product-card > a {
     display: block;
     width: 100%;
-    height: 300px; /* FIXED HEIGHT */
+    aspect-ratio: 1 / 1; /* FIXED RATIO */
     overflow: hidden;
     background-color: #f8f9fa;
 }
