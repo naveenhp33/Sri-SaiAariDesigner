@@ -512,11 +512,11 @@ function renderProductCards(products, containerId) {
                         <a href="product.html?id=${product._id}">
                             <h3 class="product-title">${product.name}</h3>
                         </a>
-                        <div class="service-meta" style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #666;">
+                        <div class="service-meta">
                             <span><i class="far fa-clock"></i> ${product.duration || 'N/A'}</span>
                             <span><i class="fas fa-tag"></i> ${product.category}</span>
                         </div>
-                        <p class="service-desc" style="font-size: 0.85rem; color: #777; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <p class="service-desc">
                             ${product.description}
                         </p>
                         <div class="product-rating" style="margin-bottom: 10px;">
