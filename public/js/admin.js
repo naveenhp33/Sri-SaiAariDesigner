@@ -358,7 +358,7 @@ async function loadManageProducts(filterType = null) {
                 <span style="background:var(--secondary-color); padding:3px 10px; border-radius:20px; font-size:0.8rem;">Cat: ${product.category}</span>
             </td>
             <td>₹ ${product.price}</td>
-            <td>${product.stock}</td>
+            <td>${product.type === 'beauty-parlour' ? (product.duration || 'N/A') : product.stock}</td>
             <td>⭐ ${parseFloat(product.rating || 5).toFixed(1)} <small style="color:#888">(${product.reviews || 0})</small></td>
             <td>
                 <div style="display:flex; gap:5px; flex-wrap:wrap;">

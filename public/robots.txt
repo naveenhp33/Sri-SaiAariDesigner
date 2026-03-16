@@ -1,0 +1,12 @@
+# robots.txt for SriSaiFashion - Sri & Sai Fashion
+# https://srisaifashion.shop
+
+User-agent: *
+Allow: /
+
+# Block admin panel from search engines
+Disallow: /admin/
+Disallow: /reset-password.html
+
+# Sitemap location
+Sitemap: https://srisaifashion.shop/sitemap.xml

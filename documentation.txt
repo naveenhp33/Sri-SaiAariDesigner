@@ -1,0 +1,40 @@
+Sri & Sai Fashion - Website Documentation
+
+1. About the Website
+The Sri & Sai Fashion website is an integrated platform offering a seamless experience for fashion enthusiasts, aspiring professionals, and beauty clients. The website combines an e-commerce boutique, a professional training academy, and beauty parlour services into one elegant digital destination.
+
+2. Key Features and Navigation
+
+* Boutique Collections & Shop Designs
+Browse our exclusive collection of Aari designs, boutique clothing, and accessories. Users can:
+- View detailed product imagery and descriptions across various categories.
+- Add items to the shopping cart for a smooth checkout process.
+- Filter and search for specific designs in the "Shop Designs" section.
+
+* Professional Training Academy
+We offer expert-led training courses for those looking to build a career in fashion and design. From this section, you can:
+- Explore our comprehensive Aari and Fashion Designing certification courses.
+- View curriculum details, syllabus structures, and course durations.
+- Enroll directly online or connect with our mentors via WhatsApp for more inquiries.
+
+* Beauty Parlour Services
+Discover our range of professional beauty and bridal makeup services. The platform allows users to explore service categories, view pricing details, and book appointments.
+
+* My Account
+Create a secure user account to enhance your experience. Within the account dashboard, users can:
+- Track current and past orders.
+- Manage shipping addresses and personal details.
+- Save favorite items to a wishlist.
+- Secure password management with modern authentication (Firebase).
+
+3. How to Use the Platform
+- Placing an Order: Navigate to the "Shop Designs" page, select your preferred item, choose the quantity, and click "Add to Cart." Proceed to the checkout page to complete your payment and enter shipping details.
+- Enrolling in a Course: Visit the "Training" page, browse the available modules, and click the "Enroll Now" button. Follow the prompts to register your interest.
+- Contacting Support: Use the floating WhatsApp button located at the bottom right of the screen for instant communication, or reach out via email and phone detailed in the footer.
+
+4. Technical Infrastructure
+The website is built using modern web technologies to ensure a fast, responsive, and secure user experience:
+- Frontend: HTML5, CSS3, and Vanilla JavaScript with a custom responsive design system.
+- Backend & Database: Powered by Node.js/Express with MongoDB Atlas for robust data management of products, courses, and user profiles.
+- Authentication: Integrated Firebase authentication for secure login, registration, and password recovery.
+- Admin Dashboard: A dedicated, secure admin panel exists to manage inventory, course structures, and monitor orders seamlessly.
