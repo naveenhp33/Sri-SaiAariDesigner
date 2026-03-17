@@ -492,9 +492,9 @@ header {
 .product-img {
     height: 100%;
     width: 100%;
-    object-fit: contain; /* Changed from cover to ensure full visibility of designs and text */
+    object-fit: cover; /* Restore cover for uniform square grid */
     object-position: center;
-    background-color: #ffffff; /* White background to fill containing area */
+    background-color: #ffffff;
     transition: transform 0.5s ease;
     display: block;
 }
