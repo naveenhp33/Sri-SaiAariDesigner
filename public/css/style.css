@@ -233,17 +233,18 @@ header {
 /* Slider Section */
 .slider-section {
     width: 100%;
-    padding: 20px;
+    padding: 20px 0; /* Reduced side padding for desktop 'fitted' look */
 }
 
 .slider-container {
     position: relative;
-    width: 100%;
-    max-width: 1200px;
+    width: 95%; /* Better fit on desktop */
+    max-width: 1300px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    background: #ffffff; /* Fallback for contain fit */
 }
 
 .slider {
@@ -251,34 +252,46 @@ header {
     transition: transform 0.6s ease-in-out;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 6.5; /* Improved ratio to better fit your banner designs */
+    aspect-ratio: 16 / 6; /* Slightly slimmer for desktop balance */
     min-height: 250px;
 }
 
 .slider img, .slider video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Fills the entire banner area, no white bars */
+    object-fit: contain; /* Ensures 'all text' is visible as requested */
     flex-shrink: 0;
     background: #ffffff;
 }
 
-@media (max-width: 1024px) {
-    .slider {
-        aspect-ratio: 16 / 7;
+/* Hover effect only for desktops with mouse */
+@media (min-width: 1025px) {
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12);
     }
 }
 
 @media (max-width: 768px) {
+    .slider-section {
+        padding: 10px;
+    }
+    .slider-container {
+        width: 100%;
+        border-radius: 10px;
+    }
     .slider {
-        aspect-ratio: 16 / 9; /* More standard ratio for tablet/mobile */
+        aspect-ratio: 16 / 9; 
         min-height: 200px;
+    }
+    .slider img, .slider video {
+        object-fit: cover; /* KEEP COVER FOR MOBILE AS REQUESTED - it looks better there */
     }
 }
 
 @media (max-width: 480px) {
     .slider {
-        aspect-ratio: 4 / 3; /* More vertical space for mobile if needed */
+        aspect-ratio: 4 / 3;
         min-height: 180px;
     }
 }
@@ -509,13 +522,13 @@ header {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 140px; /* Reduced from 200 to eliminate huge white gaps */
+    min-height: 120px; /* Further reduced for boutique cards to remove gaps */
 }
 
 .product-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.3;
-    margin-bottom: 8px;
+    margin-bottom: 5px; /* Tightened */
     font-family: 'Playfair Display', serif;
     height: 2.6em; /* Strict 2 lines */
     min-height: 2.6em;
@@ -555,12 +568,13 @@ header {
 
 .product-rating {
     height: 1.5em;
-    margin-bottom: 12px;
+    margin-bottom: 8px; /* Tightened */
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
     color: #f5c518;
+    font-size: 0.9rem;
 }
 
 .product-price {
