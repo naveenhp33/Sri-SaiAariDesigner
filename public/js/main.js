@@ -387,7 +387,7 @@ function renderSlides(slider, dotsContainer, slides) {
         const isVideo = url && (url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/'));
         if (isVideo) {
             // Note: REMOVED 'loop' so we can catch the 'ended' event
-            return `<video src="${url}" style="width:100%; height:100%; object-fit:cover; flex-shrink:0;" autoplay muted playsinline></video>`;
+            return `<video src="${url}" style="width:100%; height:100%; object-fit:contain; flex-shrink:0;" autoplay muted playsinline></video>`;
         }
         return `<img src="${url}" alt="Promotion" style="width:100%; height:100%; object-fit:contain; flex-shrink:0;">`;
     }).join('');
