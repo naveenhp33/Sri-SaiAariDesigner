@@ -82,8 +82,9 @@
 .product-img {
     height: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Changed from cover for better fit of designs */
     object-position: center;
+    background-color: #ffffff;
     transition: transform 0.5s ease;
     display: block;
 }
@@ -98,6 +99,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 140px; /* Uniform height for info area */
 }
 
 .product-title {
@@ -106,7 +108,8 @@
     font-family: 'Playfair Display', serif;
     margin-bottom: 5px;
     color: var(--text-dark);
-    max-height: 2.6em;
+    height: 2.6em; /* Strict 2 lines */
+    min-height: 2.6em;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;

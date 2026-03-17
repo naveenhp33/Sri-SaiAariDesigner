@@ -389,7 +389,7 @@ function renderSlides(slider, dotsContainer, slides) {
             // Note: REMOVED 'loop' so we can catch the 'ended' event
             return `<video src="${url}" style="width:100%; height:100%; object-fit:cover; flex-shrink:0;" autoplay muted playsinline></video>`;
         }
-        return `<img src="${url}" alt="Promotion" style="width:100%; height:100%; object-fit:cover; flex-shrink:0;">`;
+        return `<img src="${url}" alt="Promotion" style="width:100%; height:100%; object-fit:contain; flex-shrink:0;">`;
     }).join('');
 
     const slideCount = slides.length;
