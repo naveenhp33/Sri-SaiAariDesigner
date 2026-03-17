@@ -252,16 +252,16 @@ header {
     transition: transform 0.6s ease-in-out;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 6; /* Slightly slimmer for desktop balance */
-    min-height: 250px;
+    aspect-ratio: 16 / 7; /* Adjusted ratio for better desktop presence */
+    min-height: 350px; /* Increased for a more 'premium' feel */
 }
 
 .slider img, .slider video {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensures 'all text' is visible as requested */
+    object-fit: cover; /* This 'Fits' the image to the box perfectly */
     flex-shrink: 0;
-    background: #ffffff;
+    background: #000; /* Darker background for videos */
 }
 
 /* Hover effect only for desktops with mouse */
