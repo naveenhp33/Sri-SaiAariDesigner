@@ -1472,8 +1472,37 @@ header {
     box-shadow: 0 12px 24px rgba(0,0,0,0.1);
 }
 
-@media (max-width: 768px) {
-    .course-img {
-        height: 160px; /* Fixed height for mobile course images */
+@media (max-width: 600px) {
+    .service-meta {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center;
+        gap: 4px !important;
+        height: auto !important;
+        min-height: auto !important;
+    }
+    .product-title {
+        font-size: 0.95rem !important;
+        margin-bottom: 10px !important;
+        line-height: 1.2 !important;
+    }
+    .service-desc {
+        font-size: 0.75rem !important;
+        margin-bottom: 8px !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: 2.8em;
+    }
+    .product-info {
+        padding: 8px !important;
+        min-height: auto !important;
+    }
+    .product-rating {
+        margin-bottom: 6px !important;
+        font-size: 0.8rem !important;
+    }
+    .product-price {
+        font-size: 1rem !important;
+        margin-bottom: 4px !important;
     }
 }
