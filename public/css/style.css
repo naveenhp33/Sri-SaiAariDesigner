@@ -528,7 +528,7 @@ header {
 .product-title {
     font-size: 1.05rem;
     line-height: 1.3;
-    margin-bottom: 5px; /* Tightened */
+    margin-bottom: 15px; /* Increased from 5-8 to prevent overlap with icons */
     font-family: 'Playfair Display', serif;
     height: 2.6em; /* Strict 2 lines */
     min-height: 2.6em;
@@ -543,12 +543,14 @@ header {
 .service-meta {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+    align-items: flex-start;
+    margin-bottom: 12px; /* Increased from 8 to pull away from desc */
     font-size: 0.75rem;
     color: #666;
-    height: 1.5em;
+    /* height: 1.5em; REMOVED FIXED HEIGHT to prevent overlap when text wraps on mobile */
     min-height: 1.5em;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .service-desc {
