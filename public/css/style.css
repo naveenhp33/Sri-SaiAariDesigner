@@ -256,9 +256,9 @@ header {
 .slider img, .slider video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Fill the area nicely */
+    object-fit: contain; /* Changed from cover to ensure full visibility of text/banners */
     flex-shrink: 0;
-    background: #fdfdfd;
+    background: #ffffff; /* White background to fill containing area */
 }
 
 @media (max-width: 768px) {
@@ -391,7 +391,8 @@ header {
 .courses-video-wrap video {
     width: 100%;
     aspect-ratio: 16/9;
-    object-fit: cover;
+    object-fit: contain; /* Changed from cover */
+    background: #f8f9fa;
 }
 
 .courses-video-wrap img {
@@ -473,8 +474,9 @@ header {
 .product-img {
     height: 100%;
     width: 100%;
-    object-fit: cover; /* ENSURE FULL COVERAGE */
+    object-fit: contain; /* Changed from cover to ensure full visibility of designs and text */
     object-position: center;
+    background-color: #ffffff; /* White background to fill containing area */
     transition: transform 0.5s ease;
     display: block;
 }

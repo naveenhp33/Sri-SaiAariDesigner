@@ -134,6 +134,14 @@ if (!window.api) {
         return await res.json();
     },
 
+    updateCourse: async (id, formData) => {
+        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
+            method: 'PUT',
+            body: formData
+        });
+        return await res.json();
+    },
+
     // --- Auth ---
     login: async (credentials) => {
         const res = await fetch(`${API_BASE_URL}/api/auth/login`, {

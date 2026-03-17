@@ -410,6 +410,32 @@ app.delete('/api/courses/:id', async (req, res) => {
     }
 });
 
+app.put('/api/courses/:id', upload.single('image'), async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        let imageUrl = course.image;
+        if (req.file) {
+            // Delete old image from Cloudinary if a new one is uploaded
+            if (course.image) {
+                await deleteFromCloudinary(course.image);
+            }
+            imageUrl = req.file.path;
+        }
+
+        const updatedData = {
+            ...req.body,
+            image: imageUrl
+        };
+
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+        res.json(updatedCourse);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 // --- Products ---
 app.get('/api/products', async (req, res) => {
     try {
