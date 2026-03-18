@@ -9,6 +9,9 @@ const multer = require('multer');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const dns = require('dns');
+const https = require('https');
+const http = require('http');
+const URL = 'https://srisaifashion.shop'; // Updated: removed www (DNS error)
 
 // Force IPv4 preference for network connections (Fixes ENETUNREACH on many cloud providers)
 if (dns.setDefaultResultOrder) {
@@ -21,29 +24,37 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Health check endpoint (At top for reliability)
+app.get('/api/ping', (req, res) => {
+    console.log(`[${new Date().toISOString()}] Ping received from: ${req.ip}`);
+    res.json({ status: 'OK', timestamp: new Date() });
+});
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static('public'));
 
 // Keep-alive logic for Render free tier
-// This prevents the server from sleeping after 15 minutes of inactivity
-const RENDER_URL = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+// Note: This internal pinger only works if the server is ALREADY awake.
+// To wake a sleeping server, use an external pinger (like cron-job.org).
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL || 'https://srisaifashion.shop';
 if (RENDER_URL) {
-    const https = require('https');
+    const pingUrl = RENDER_URL.endsWith('/') ? `${RENDER_URL}api/ping` : `${RENDER_URL}/api/ping`;
+    const protocol = pingUrl.startsWith('https') ? https : http;
+    
     setInterval(() => {
-        https.get(`${RENDER_URL}/api/ping`, (res) => {
-            console.log(`Keep-alive ping status: ${res.statusCode}`);
+        protocol.get(pingUrl, (res) => {
+            // Consume response data to free up memory
+            res.on('data', () => {});
+            console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.statusCode}`);
         }).on('error', (err) => {
-            console.error('Keep-alive ping error:', err.message);
+            console.error('[Keep-Alive] Error:', err.message);
         });
     }, 10 * 60 * 1000); // Ping every 10 minutes
 }
 
-// Health check endpoint
-app.get('/api/ping', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date() });
-});
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)

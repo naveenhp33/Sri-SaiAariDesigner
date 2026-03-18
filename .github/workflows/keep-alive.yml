@@ -1,0 +1,20 @@
+name: Keep Alive Render Bot
+on:
+  schedule:
+    # Run every 14 minutes to prevent Render free tier from sleeping (it sleeps after 15m)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Stay-Awake Request
+        run: |
+          URL="https://srisaifashion.shop" 
+          if [ -n "${{ secrets.RENDER_URL }}" ]; then
+            URL="${{ secrets.RENDER_URL }}"
+          fi
+          echo "Pinging ${URL} to keep it awake..."
+          curl -s "${URL}/api/ping" || echo "Ping failed, but checking health..."
+          curl -s "${URL}/api/health" || echo "Health check failed."
