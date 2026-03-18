@@ -38,7 +38,7 @@ app.use(express.static('public'));
 // Keep-alive logic for Render free tier
 // Note: This internal pinger only works if the server is ALREADY awake.
 // To wake a sleeping server, use an external pinger (like cron-job.org).
-const RENDER_URL = process.env.RENDER_EXTERNAL_URL || 'https://srisaifashion.shop';
+const RENDER_URL = 'https://srisaifashion.shop';
 if (RENDER_URL) {
     const pingUrl = RENDER_URL.endsWith('/') ? `${RENDER_URL}api/ping` : `${RENDER_URL}/api/ping`;
     const protocol = pingUrl.startsWith('https') ? https : http;
