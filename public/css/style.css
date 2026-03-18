@@ -259,7 +259,7 @@ header {
 .slider img, .slider video {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensures vertical videos are fully visible */
+    object-fit: cover; /* Ensures media fully covers the slider area, eliminating white space */
     flex-shrink: 0;
     background: #ffffff;
 }
