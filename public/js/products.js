@@ -657,9 +657,69 @@ async function loadProductDetail() {
             }
             const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
             const isWishlisted = wishlist.some(x => x && x._id === product._id);
-
             const isBeautyParlour = product.type === 'beauty-parlour';
             
+            // --- DYNAMIC SEO UPDATES ---
+            const pageTitle = `${product.name} | Sri & Sai Fashion`;
+            const pageDesc = product.description.substring(0, 160);
+            const pageUrl = window.location.href;
+            const pageImg = product.image || (product.images && product.images[0]);
+
+            document.title = pageTitle;
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) {
+                metaDesc.setAttribute('content', pageDesc);
+            } else {
+                const newMeta = document.createElement('meta');
+                newMeta.name = "description";
+                newMeta.content = pageDesc;
+                document.head.appendChild(newMeta);
+            }
+
+            // Update OG Tags
+            const updateMeta = (property, content) => {
+                const el = document.querySelector(`meta[property="${property}"]`);
+                if (el) el.setAttribute('content', content);
+            };
+            updateMeta('og:title', pageTitle);
+            updateMeta('og:description', pageDesc);
+            updateMeta('og:url', pageUrl);
+            if (pageImg) updateMeta('og:image', pageImg);
+
+            // Update Canonical
+            const canon = document.getElementById('canonical-link');
+            if (canon) canon.setAttribute('href', pageUrl);
+
+            // Dynamic Schema (JSON-LD)
+            const schemaScript = document.getElementById('product-schema');
+            if (schemaScript) {
+                const schemaData = {
+                    "@context": "https://schema.org",
+                    "@type": "Product",
+                    "name": product.name,
+                    "image": pageImg,
+                    "description": product.description,
+                    "brand": {
+                        "@type": "Brand",
+                        "name": "Sri & Sai Fashion"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "url": pageUrl,
+                        "priceCurrency": "INR",
+                        "price": product.price,
+                        "availability": product.stock > 0 || isBeautyParlour ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+                    },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": product.rating || 5,
+                        "reviewCount": product.reviews || 1
+                    }
+                };
+                schemaScript.textContent = JSON.stringify(schemaData);
+            }
+            // --- END DYNAMIC SEO ---
+
             const images = (product.images && product.images.length > 0) ? product.images : [product.image].filter(Boolean);
             
             // Main Media (Image or Video)

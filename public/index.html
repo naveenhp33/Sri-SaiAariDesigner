@@ -39,17 +39,17 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Structured Data - LocalBusiness + Website -->
+    <!-- Structured Data - LocalBusiness + Website + Breadcrumbs -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "Sri & Sai Fashion",
       "alternateName": ["SriSaiFashion", "Sri Sai Fashion", "Sri & Sai Aari Designer", "Sri Sai Aari Designer"],
-      "description": "Premium Aari embroidery boutique, professional beauty parlour services, and expert fashion training academy in Thiruthuraipoondi, Tamil Nadu.",
+      "description": "Premium Aari embroidery boutique, professional beauty parlour services, and expert fashion training academy in Thiruthuraipoondi, Tamil Nadu. Specializing in Bridal Blouses and Handcrafted Aari designs.",
       "url": "https://srisaifashion.shop",
-      "logo": "./images/sri-logo2.png",
-      "image": "./images/sri-logo2.png",
+      "logo": "https://res.cloudinary.com/drxlyekj9/image/upload/v1773582490/aari-logo-square.png",
+      "image": "https://res.cloudinary.com/drxlyekj9/image/upload/v1773582490/aari-logo-square.png",
       "telephone": "+919688561269",
       "email": "srisaiaaridesigner17@gmail.com",
       "address": {
@@ -65,8 +65,15 @@
         "latitude": "10.5298",
         "longitude": "79.6349"
       },
-      "openingHours": "Mo-Sa 10:00-21:00",
-      "priceRange": "₹500 - ₹10000",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          "opens": "10:00",
+          "closes": "21:00"
+        }
+      ],
+      "priceRange": "₹₹",
       "sameAs": [
         "https://www.facebook.com/share/1CSZWAPEJn/",
         "https://www.instagram.com/sri_saiaari_designer",
@@ -74,7 +81,7 @@
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Fashion & Beauty Services",
+        "name": "Sri & Sai Fashion Services",
         "itemListElement": [
           {
             "@type": "OfferCatalog",
@@ -83,60 +90,25 @@
               {
                 "@type": "Offer", 
                 "itemOffered": {
-                  "@type": "Product", 
-                  "name": "Bridal Aari Blouse",
-                  "image": "https://res.cloudinary.com/drxlyekj9/image/upload/v1773582490/aari-logo-square.png",
-                  "description": "Exquisite handcrafted bridal aari embroidery blouses.",
-                  "brand": { "@type": "Brand", "name": "Sri & Sai Fashion" },
-                  "offers": {
-                    "@type": "Offer",
-                    "price": "2500",
-                    "priceCurrency": "INR",
-                    "availability": "https://schema.org/InStoreOnly"
-                  }
-                }
-              },
-              {
-                "@type": "Offer", 
-                "itemOffered": {
-                  "@type": "Product", 
-                  "name": "Designer Aari Blouse",
-                  "image": "https://res.cloudinary.com/drxlyekj9/image/upload/v1773582490/aari-logo-square.png",
-                  "description": "Premium designer aari work blouses for all occasions.",
-                  "brand": { "@type": "Brand", "name": "Sri & Sai Fashion" },
-                  "offers": {
-                    "@type": "Offer",
-                    "price": "1500",
-                    "priceCurrency": "INR",
-                    "availability": "https://schema.org/InStoreOnly"
-                  }
-                }
-              },
-              {
-                "@type": "Offer", 
-                "itemOffered": {
-                  "@type": "Product", 
-                  "name": "Party Wear Blouse",
-                  "image": "https://res.cloudinary.com/drxlyekj9/image/upload/v1773582490/aari-logo-square.png",
-                  "description": "Elegant party wear blouses with delicate embroidery.",
-                  "brand": { "@type": "Brand", "name": "Sri & Sai Fashion" },
-                  "offers": {
-                    "@type": "Offer",
-                    "price": "800",
-                    "priceCurrency": "INR",
-                    "availability": "https://schema.org/InStoreOnly"
-                  }
+                  "@type": "Service", 
+                  "name": "Bridal Aari Blouse Customization",
+                  "description": "Exquisite handcrafted bridal aari embroidery blouses."
                 }
               }
             ]
           },
           {
             "@type": "OfferCatalog",
-            "name": "Beauty Parlour Services"
-          },
-          {
-            "@type": "OfferCatalog",
-            "name": "Professional Training Academy"
+            "name": "Beauty Parlour Services",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                    "@type": "Service",
+                    "name": "Bridal Makeup & Skin Care"
+                }
+              }
+            ]
           }
         ]
       }
@@ -148,7 +120,24 @@
       "@type": "WebSite",
       "name": "Sri & Sai Fashion",
       "alternateName": "SriSaiFashion",
-      "url": "https://srisaifashion.shop"
+      "url": "https://srisaifashion.shop",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://srisaifashion.shop/products.html?keyword={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://srisaifashion.shop/"
+      }]
     }
     </script>
 </head>

@@ -33,7 +33,7 @@ app.get('/api/ping', (req, res) => {
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
-app.use(express.static('public'));
+// express.static moved lower to allow dynamic overrides like sitemap.xml
 
 // Keep-alive logic for Render free tier
 // Note: This internal pinger only works if the server is ALREADY awake.
@@ -86,6 +86,61 @@ const Order = require('./models/Order');
 const Slider = require('./models/Slider');
 const Course = require('./models/Course');
 const User = require('./models/User');
+
+// Dynamic Sitemap (XML) - Helps search engines find all products
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const products = await Product.find({}, '_id updatedAt');
+        // courses could be added too
+        
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://srisaifashion.shop/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/products.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/boutique.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/beauty-parlour.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/training.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/about.html</loc>
+    <priority>0.7</priority>
+  </url>`;
+
+        // Add Product detail pages
+        products.forEach(p => {
+            xml += `
+  <url>
+    <loc>https://srisaifashion.shop/product.html?id=${p._id}</loc>
+    <lastmod>${(p.updatedAt || new Date()).toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+        });
+
+        xml += `\n</urlset>`;
+        res.header('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (err) {
+        console.error('Sitemap error:', err);
+        res.status(500).end();
+    }
+});
+
+app.use(express.static('public'));
 
 // --- API Routes ---
 

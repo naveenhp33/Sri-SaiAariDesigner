@@ -332,7 +332,7 @@
         // FIREBASE CONFIGURATION - USER: Please fill your actual config here
         const firebaseConfig = {
             apiKey: "AIzaSyCx2Yf8Z-jbv7EfI9TGTDgykOkuKf5gQuo",
-            authDomain: "www.srisaifashion.shop",
+            authDomain: "aari-web.firebaseapp.com",
             projectId: "aari-web",
             storageBucket: "aari-web.firebasestorage.app",
             messagingSenderId: "600521359508",
@@ -360,8 +360,18 @@
             el.style.display = 'block';
         }
 
+        let isSigningIn = false;
         async function signInWithGoogle() {
+            if (isSigningIn) return;
+            
+            const btn = document.querySelector('.btn-google');
+            const originalContent = btn.innerHTML;
+            
             try {
+                isSigningIn = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                btn.disabled = true;
+
                 const result = await auth.signInWithPopup(googleProvider);
                 const user = result.user;
 
@@ -380,7 +390,13 @@
                 }
             } catch (error) {
                 console.error("Google Auth Error:", error);
-                showMessage('login-msg', error.message, 'error');
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    showMessage('login-msg', error.message, 'error');
+                }
+            } finally {
+                isSigningIn = false;
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
             }
         }
 
