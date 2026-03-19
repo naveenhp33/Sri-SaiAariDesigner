@@ -36,6 +36,12 @@ ul {
 img {
     max-width: 100%;
     height: auto;
+    background: #f0f0f0 no-repeat center; /* Solid color while loading */
+    transition: opacity 0.3s ease;
+}
+
+img:not([src]) {
+    opacity: 0;
 }
 
 /* Utilities */

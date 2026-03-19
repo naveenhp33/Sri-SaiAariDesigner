@@ -1,3 +1,9 @@
+function optimizeCloudinary(url, transformations = 'f_auto,q_auto') {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    if (url.includes('/upload/f_auto')) return url;
+    return url.replace('/upload/', `/upload/${transformations}/`);
+}
+
 function showTab(tabName) {
     // Update buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -30,7 +36,7 @@ function loadWishlist() {
     container.innerHTML = wishlist.map(item => `
         <div class="wishlist-item" id="wish-item-${item._id}">
             <i class="fas fa-trash remove-wishlist" onclick="removeFromWishlist('${item._id}')"></i>
-            <img src="${item.image}" alt="${item.name}">
+            <img src="${optimizeCloudinary(item.image, 'f_auto,q_auto,w_300')}" alt="${item.name}" loading="lazy">
             <h4>${item.name}</h4>
             <p style="color: var(--primary-color); font-weight: bold;">₹${item.price}</p>
             <a href="product.html?id=${item._id}" class="btn" style="padding: 5px 10px; font-size: 0.8rem; margin-top: 10px;">View</a>

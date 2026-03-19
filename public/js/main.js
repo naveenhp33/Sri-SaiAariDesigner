@@ -12,17 +12,21 @@ function updateCartCount() {
     syncWithServer();
 }
 
-async function syncWithServer() {
+function syncWithServer() {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem('userToken');
     if (user && user.id && token && window.api) {
         try {
             const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            await window.api.syncUserData(user.id, { cart, wishlist });
-        } catch (e) {
-            console.warn('Silent sync failed', e);
-        }
+            window.api.syncUserData(user.id, { cart, wishlist }).catch(() => {});
+        } catch (e) {}
     }
+}
+
+function optimizeCloudinary(url, transformations = 'f_auto,q_auto') {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    if (url.includes('/upload/f_auto')) return url;
+    return url.replace('/upload/', `/upload/${transformations}/`);
 }
 
 function getInitials(name) {
@@ -386,9 +390,10 @@ function renderSlides(slider, dotsContainer, slides) {
         const url = slide.image || slide.url;
         const isVideo = url && (url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/'));
         if (isVideo) {
-            return `<video src="${url}" style="width:100%; height:100%; flex-shrink:0;" autoplay muted playsinline></video>`;
+            return `<video src="${optimizeCloudinary(url)}" style="width:100%; height:100%; flex-shrink:0;" autoplay muted playsinline></video>`;
         }
-        return `<img src="${url}" alt="Promotion" style="width:100%; height:100%; flex-shrink:0;">`;
+        // Optimize slider images to 1200px width for better desktop quality
+        return `<img src="${optimizeCloudinary(url, 'f_auto,q_auto,w_1200')}" alt="Promotion" style="width:100%; height:100%; flex-shrink:0;" loading="eager">`;
     }).join('');
 
     const slideCount = slides.length;
@@ -472,7 +477,7 @@ async function initCourses() {
         if (coursesGrid && courses.length > 0) {
             coursesGrid.innerHTML = courses.map(course => `
                 <div class="course-card">
-                    <img src="${course.image}" alt="${course.title}" class="course-img">
+                    <img src="${optimizeCloudinary(course.image, 'f_auto,q_auto,w_500')}" alt="${course.title}" class="course-img" loading="lazy">
                     <div class="course-content">
                         <h3>${course.title}</h3>
                         <p>${course.description}</p>

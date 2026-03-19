@@ -486,11 +486,19 @@ function isMediaVideo(url) {
     return url.match(/\.(mp4|mov|avi|wmv)/i) || url.includes('/video/upload/');
 }
 
+function optimizeCloudinary(url, transformations = 'f_auto,q_auto') {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    if (url.includes('/upload/f_auto')) return url; // Already optimized
+    return url.replace('/upload/', `/upload/${transformations}/`);
+}
+
 function renderMediaTag(url, className, style = "", alt = "Product") {
     if (isMediaVideo(url)) {
-        return `<video src="${url}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
+        return `<video src="${optimizeCloudinary(url, 'f_auto,q_auto')}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
     }
-    return `<img src="${url}" class="${className}" style="${style}" alt="${alt}">`;
+    // Optimize thumbnails to 400px wide for grid cards
+    const optimizedUrl = optimizeCloudinary(url, 'f_auto,q_auto,w_400,c_fill');
+    return `<img src="${optimizedUrl}" class="${className}" style="${style}" alt="${alt}" loading="lazy">`;
 }
 
 function renderProductCards(products, containerId) {
