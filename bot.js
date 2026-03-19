@@ -12,10 +12,8 @@ const http = require('http');
  * 2. Run with: `node bot.js`
  */
 
-const URL = 'https://srisaifashion.shop'; // Updated: Removed www
-// Alternatively, read from environment variables: process.env.RENDER_URL
-
-const pingInterval = 14 * 60 * 1000; // 14 minutes
+const URL = process.env.RENDER_EXTERNAL_URL || 'https://srisaifashion.shop';
+const pingInterval = 8 * 60 * 1000; // Increased frequency to 8 minutes
 
 function ping() {
     console.log(`[${new Date().toISOString()}] Sending Keep-Alive ping to ${URL}...`);

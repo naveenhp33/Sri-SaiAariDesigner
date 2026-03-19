@@ -36,22 +36,22 @@ app.use(bodyParser.json({ limit: '10mb' }));
 // express.static moved lower to allow dynamic overrides like sitemap.xml
 
 // Keep-alive logic for Render free tier
-// Note: This internal pinger only works if the server is ALREADY awake.
-// To wake a sleeping server, use an external pinger (like cron-job.org).
-const RENDER_URL = 'https://srisaifashion.shop';
-if (RENDER_URL) {
-    const pingUrl = RENDER_URL.endsWith('/') ? `${RENDER_URL}api/ping` : `${RENDER_URL}/api/ping`;
+// Note: This pinger helps but some Cloud providers ignore "self-requests" for inactivity.
+// To wake a sleeping server, use the GitHub Action or an external pinger (like cron-job.org).
+const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://srisaifashion.shop';
+if (APP_URL) {
+    const pingUrl = APP_URL.endsWith('/') ? `${APP_URL}api/ping` : `${APP_URL}/api/ping`;
     const protocol = pingUrl.startsWith('https') ? https : http;
     
     setInterval(() => {
         protocol.get(pingUrl, (res) => {
-            // Consume response data to free up memory
+            // Consume response data to avoid leaks
             res.on('data', () => {});
-            console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.statusCode}`);
+            console.log(`[Keep-Alive] Bot pinged ${pingUrl} - Response: ${res.statusCode}`);
         }).on('error', (err) => {
-            console.error('[Keep-Alive] Error:', err.message);
+            console.error('[Keep-Alive] Ping Error:', err.message);
         });
-    }, 10 * 60 * 1000); // Ping every 10 minutes
+    }, 8 * 60 * 1000); // Increased frequency to 8 minutes
 }
 
 
