@@ -38,7 +38,7 @@ app.use(bodyParser.json({ limit: '10mb' }));
 // Keep-alive logic for Render free tier
 // Note: This pinger helps but some Cloud providers ignore "self-requests" for inactivity.
 // To wake a sleeping server, use the GitHub Action or an external pinger (like cron-job.org).
-const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://srisaifashion.shop';
+const APP_URL = 'https://srisaifashion.shop'; // Force using the new custom domain
 if (APP_URL) {
     const pingUrl = APP_URL.endsWith('/') ? `${APP_URL}api/ping` : `${APP_URL}/api/ping`;
     const protocol = pingUrl.startsWith('https') ? https : http;
