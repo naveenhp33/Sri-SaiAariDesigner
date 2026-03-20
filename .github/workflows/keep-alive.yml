@@ -1,8 +1,9 @@
 name: Keep Alive Render Bot
 on:
   schedule:
-    # Run every 10 minutes to prevent Render free tier from sleeping (it sleeps after 15m)
-    - cron: '*/10 * * * *'
+    # Run every 5 minutes to prevent Render free tier from sleeping (it sleeps after 15m)
+    # Using 5 minutes because GitHub Actions queues are often delayed.
+    - cron: '*/5 * * * *'
   workflow_dispatch: # Allows manual trigger
 
 jobs:
