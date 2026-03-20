@@ -260,7 +260,7 @@ app.patch('/api/auth/profile/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
-        const user = await User.findByIdAndUpdate(id, updates, { new: true });
+        const user = await User.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({
             message: 'Profile updated',
@@ -306,7 +306,7 @@ app.patch('/api/auth/sync/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { cart, wishlist } = req.body;
-        const user = await User.findByIdAndUpdate(id, { cart, wishlist }, { new: true });
+        const user = await User.findByIdAndUpdate(id, { cart, wishlist }, { returnDocument: 'after' });
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({ message: 'Sync successful', cart: user.cart, wishlist: user.wishlist });
     } catch (err) {
@@ -515,7 +515,7 @@ app.put('/api/courses/:id', isAdmin, upload.single('image'), async (req, res) =>
             image: imageUrl
         };
 
-        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, updatedData, { returnDocument: 'after' });
         res.json(updatedCourse);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -592,7 +592,7 @@ app.put('/api/products/:id', isAdmin, upload.array('images', 5), async (req, res
             images: imageUrls
         };
 
-        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updatedData, { returnDocument: 'after' });
         res.json(updatedProduct);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -656,7 +656,7 @@ app.patch('/api/orders/:id', isAdmin, async (req, res) => {
         const updatedOrder = await Order.findByIdAndUpdate(
             req.params.id,
             { orderStatus: req.body.orderStatus },
-            { new: true }
+            { returnDocument: 'after' }
         );
         res.json(updatedOrder);
     } catch (err) {
