@@ -36,11 +36,12 @@ ul {
 img {
     max-width: 100%;
     height: auto;
-    background: #f0f0f0 no-repeat center; /* Solid color while loading */
     transition: opacity 0.3s ease;
+    opacity: 1; /* Ensure visible by default */
 }
 
-img:not([src]) {
+/* Only hide if explicitly without src and not intended to be shown yet */
+img:not([src]), img[src=""] {
     opacity: 0;
 }
 
@@ -151,8 +152,7 @@ header {
     height: 120px;
     width: auto;
     border-radius: 4px;
-    mix-blend-mode: multiply; /* Simulates transparency for white backgrounds */
-    filter: brightness(1.05) contrast(1.1);
+    background-color: transparent !important;
     transition: var(--transition);
 }
 
