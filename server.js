@@ -31,6 +31,13 @@ app.get('/api/ping', (req, res) => {
 });
 
 // Middleware
+// Enforce HTTPS
+app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(301, 'https://' + req.headers.host + req.url);
+    }
+    next();
+});
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 // express.static moved lower to allow dynamic overrides like sitemap.xml
