@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -11,7 +12,7 @@ const crypto = require('crypto');
 const dns = require('dns');
 const https = require('https');
 const http = require('http');
-const URL = 'https://srisaifashion.shop'; // Updated: removed www (DNS error)
+const URL = 'https://srisaifashion.shop';
 
 // Force IPv4 preference for network connections (Fixes ENETUNREACH on many cloud providers)
 if (dns.setDefaultResultOrder) {
@@ -31,34 +32,35 @@ app.get('/api/ping', (req, res) => {
 });
 
 // Middleware
-// Enforce HTTPS
+// Enforce HTTPS and non-WWW
 app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(301, 'https://' + req.headers.host + req.url);
+    const host = req.headers.host || '';
+    const isWww = host.startsWith('www.');
+    const isHttps = req.headers['x-forwarded-proto'] === 'https';
+
+    if (isWww || !isHttps) {
+        const newHost = isWww ? host.slice(4) : host;
+        return res.redirect(301, 'https://' + newHost + req.url);
     }
     next();
 });
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
-// express.static moved lower to allow dynamic overrides like sitemap.xml
 
 // Keep-alive logic for Render free tier
-// Note: This pinger helps but some Cloud providers ignore "self-requests" for inactivity.
-// To wake a sleeping server, use the GitHub Action or an external pinger (like cron-job.org).
-const APP_URL = 'https://www.srisaifashion.shop'; // Force using the new custom domain with www to bypass Cloudflare redirect
+const APP_URL = 'https://srisaifashion.shop'; 
 if (APP_URL) {
-    const pingUrl = APP_URL.endsWith('/') ? `${APP_URL}api/ping` : `${APP_URL}/api/ping`;
+    const pingUrl = `${APP_URL}/api/ping`;
     const protocol = pingUrl.startsWith('https') ? https : http;
     
     setInterval(() => {
         protocol.get(pingUrl, (res) => {
-            // Consume response data to avoid leaks
             res.on('data', () => {});
             console.log(`[Keep-Alive] Bot pinged ${pingUrl} - Response: ${res.statusCode}`);
         }).on('error', (err) => {
             console.error('[Keep-Alive] Ping Error:', err.message);
         });
-    }, 8 * 60 * 1000); // Increased frequency to 8 minutes
+    }, 8 * 60 * 1000); 
 }
 
 
@@ -98,7 +100,6 @@ const User = require('./models/User');
 app.get('/sitemap.xml', async (req, res) => {
     try {
         const products = await Product.find({}, '_id updatedAt');
-        // courses could be added too
         
         let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -125,6 +126,14 @@ app.get('/sitemap.xml', async (req, res) => {
   <url>
     <loc>https://srisaifashion.shop/about.html</loc>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/privacy-policy.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://srisaifashion.shop/terms-conditions.html</loc>
+    <priority>0.5</priority>
   </url>`;
 
         // Add Product detail pages
@@ -722,6 +731,11 @@ app.post('/api/orders/:orderId/rate-item', async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+});
+
+// 10. 404 Page (Must be last)
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
 app.listen(PORT, () => {
